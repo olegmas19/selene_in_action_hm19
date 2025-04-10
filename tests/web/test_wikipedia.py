@@ -11,4 +11,4 @@ def test_search():
     with step('Verify content found'):
         results = browser.all('.suggestion-link')
         results.should(have.size_greater_than(0))
-        results.first.should(have.text('Appium'))
+        results.first.should(have.text('AppImage'))
