@@ -3,7 +3,7 @@ from appium.webdriver.common.appiumby import AppiumBy
 from selene import browser, have
 
 
-def test_search_appium(ios_mobile_management):
+def test_ios_input(ios_mobile_management):
 
     with step('Вводим текст'):
         browser.element((AppiumBy.ACCESSIBILITY_ID, "Text Button")).click()

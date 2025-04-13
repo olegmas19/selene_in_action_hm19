@@ -2,7 +2,7 @@ from selene import have, browser
 from allure import step
 
 
-def test_search():
+def test_web_wikipedia_search():
     browser.open('/')
 
     with step('Type search'):
