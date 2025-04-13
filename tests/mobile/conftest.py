@@ -1,11 +1,17 @@
+import allure
 import pytest
+
+# from allure_commons._allure import StepContext
+import allure_commons
 from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
-from selene import browser
+
+# from requests import session
+from selene import browser, support
 import os
 from selene_in_action.selene_in_action_api import AndroidApp
 from appium import webdriver
-
+from utils.attach import add_screenshot, add_video, add_xml
 
 
 @pytest.fixture()
@@ -34,16 +40,25 @@ def android_mobile_management():
             },
         }
     )
+    with allure.step("Init app session"):
+        browser.config.driver = webdriver.Remote(
+            f"http://{browserstack_url}/wd/hub", options=options
+        )
 
-    browser.config.driver = webdriver.Remote(f"http://{browserstack_url}/wd/hub", options=options)
     browser.config.timeout = float(os.getenv("timeout", "10.0"))
-
-    session_id = browser.driver.session_id
-    print(session_id)
+    browser.config._wait_decorator = support._logging.wait_with(
+        context=allure_commons._allure.StepContext
+    )
 
     yield
 
-    browser.quit()
+    session_id = browser.driver.session_id
+    add_screenshot(browser.config)
+    add_xml(browser.config)
+    add_video(session_id)
+
+    with allure.step("Tear down app session"):
+        browser.quit()
 
 
 @pytest.fixture()
@@ -70,9 +85,20 @@ def ios_mobile_management():
         }
     )
 
-    browser.config.driver = webdriver.Remote(f"http://{browserstack_url}/wd/hub", options=options)
+    browser.config.driver = webdriver.Remote(
+        f"http://{browserstack_url}/wd/hub", options=options
+    )
     browser.config.timeout = float(os.getenv("timeout", "10.0"))
+    browser.config._wait_decorator = support._logging.wait_with(
+        context=allure_commons._allure.StepContext
+    )
 
     yield
 
-    browser.quit()
+    session_id = browser.driver.session_id
+    add_screenshot(browser.config)
+    add_xml(browser.config)
+    add_video(session_id)
+
+    with allure.step("Tear down app session"):
+        browser.quit()
