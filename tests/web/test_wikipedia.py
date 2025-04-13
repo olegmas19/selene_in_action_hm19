@@ -12,3 +12,4 @@ def test_search():
         results = browser.all('.suggestion-link')
         results.should(have.size_greater_than(0))
         results.first.should(have.text('AppImage'))
+
