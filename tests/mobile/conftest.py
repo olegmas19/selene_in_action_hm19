@@ -1,14 +1,8 @@
-import base64
 import pytest
-import requests
 from appium.options.android import UiAutomator2Options
-from dotenv import load_dotenv
 from selene import browser
 import os
 from selene_in_action.selene_in_action_api import AndroidApp
-from selene_in_action.resourse import DATA_DIR
-
-
 
 
 @pytest.fixture(scope='function', autouse=True)
