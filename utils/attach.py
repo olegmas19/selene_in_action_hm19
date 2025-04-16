@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import allure
 import requests
@@ -20,7 +21,8 @@ def add_xml(browser):
 
 
 def add_video(session_id):
-    load_dotenv()
+    env_file = Path(__file__).parent / f".env.bstack"
+    load_dotenv(env_file)
     browserstack_user_name = os.getenv("BROWSERSTACK_USER_NAME")
     browserstack_access_key = os.getenv("BROWSERSTACK_ACCESS_KEY")
     browserstack_session = requests.get(

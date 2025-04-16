@@ -1,5 +1,7 @@
 import base64
 import os
+from pathlib import Path
+
 import requests
 from dotenv import load_dotenv
 # from config import settings
@@ -12,7 +14,8 @@ class AndroidApp:
 
     @staticmethod
     def get_apk_app():
-        load_dotenv('.bstack.env')
+        env_file = Path(__file__).parent.parent / f'.env.bstack'
+        load_dotenv(env_file)
         browserstack_user_name = os.getenv('BROWSERSTACK_USER_NAME')
         browserstack_access_key = os.getenv('BROWSERSTACK_ACCESS_KEY')
         url = "https://api-cloud.browserstack.com/app-automate/upload"
