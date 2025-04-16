@@ -24,11 +24,6 @@ from utils.attach import add_screenshot, add_video, add_xml
 def android_mobile_management():
 
     with allure.step("Init app session"):
-        load_dotenv('.bstack.env')
-        browserstack_user_name = os.getenv('BROWSERSTACK_USER_NAME')
-        browserstack_access_key = os.getenv('BROWSERSTACK_ACCESS_KEY')
-        print(browserstack_user_name)
-        print(browserstack_access_key)
         browser.config.driver = webdriver.Remote(config.remote_url_config(), options=config.to_driver_options())
 
     browser.config.timeout = float(os.getenv("timeout", "10.0"))
