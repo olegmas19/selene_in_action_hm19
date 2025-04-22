@@ -1,25 +1,20 @@
 import base64
 import os
 from pathlib import Path
-
 import requests
 from dotenv import load_dotenv
-# from config import settings
-from selene_in_action.resourse import DATA_DIR
-
-
+from wikipedia_mobile.resourse import DATA_DIR
 
 
 class AndroidApp:
 
     @staticmethod
     def get_apk_app():
-        env_file = Path(__file__).parent.parent / f'.env.bstack'
-        load_dotenv(env_file)
-        browserstack_user_name = os.getenv('BROWSERSTACK_USER_NAME')
-        browserstack_access_key = os.getenv('BROWSERSTACK_ACCESS_KEY')
+        load_dotenv(
+            dotenv_path=Path(__file__).resolve().parent.parent / f".env.credentials"
+        )
         url = "https://api-cloud.browserstack.com/app-automate/upload"
-        token = f"{browserstack_user_name}:{browserstack_access_key}"
+        token = f"{os.getenv('USER_NAME')}:{os.getenv('ACCESS_KEY')}"
         encoded_credentials = base64.b64encode(token.encode("utf-8")).decode("utf-8")
 
         payload = {}

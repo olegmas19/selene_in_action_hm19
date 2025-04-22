@@ -29,6 +29,7 @@ __pycache__/
 # Environments
 .venv*
 venv*/
-.env.browserstack
+.env.bstack
 .env.local_emulator
 .env.local_real
+.env.credentials

@@ -2,53 +2,65 @@ import os
 from pathlib import Path
 from appium.options.android import UiAutomator2Options
 from dotenv import load_dotenv
-from selene_in_action.resourse import DATA_DIR
-from selene_in_action.selene_in_action_api import AndroidApp
-
-context = os.getenv("context", "browserstack")
+from pydantic import BaseModel
+from wikipedia_mobile.resourse import DATA_DIR
 
 
-def load_environment():
-    env_file = Path(__file__).parent / f".env.{context}"
-    load_dotenv(env_file)
+class Config(BaseModel):
+    context: str
+    remote_url: str = os.getenv("REMOTE_URL")
+    device_name: str = os.getenv("DEVICE_NAME")
+    udid: str = os.getenv("UDID")
+    appWaitActivity: str = os.getenv("APP_WAIT_ACTIVITY")
+    app_local: str = DATA_DIR + os.getenv("APP")
+    app_bstack: str = os.getenv("APP")
+    platformName: str = os.getenv("PLATFORM_NAME")
+    platformVersion: str = os.getenv("PLATFORM_VERSION")
+
+    def to_driver_options(self, context):
+        options = UiAutomator2Options()
+
+        if context == "bstack":
+            load_dotenv(
+                dotenv_path=Path(__file__).resolve().parent / f".env.credentials"
+            )
+            options.load_capabilities(
+                {
+                    "remote_url": self.remote_url,
+                    "platformName": self.platformName,
+                    "platformVersion": self.platformVersion,
+                    "deviceName": self.device_name,
+                    "app": self.app_bstack,
+                    "appWaitActivity": self.appWaitActivity,
+                    "bstack:options": {
+                        "projectName": "First Python project",
+                        "buildName": "browserstack-build-1",
+                        "sessionName": "BStack first_test",
+                        "userName": os.getenv("USER_NAME"),
+                        "accessKey": os.getenv("ACCESS_KEY"),
+                    },
+                }
+            )
+        elif context == "local_emulator":
+            options.load_capabilities(
+                {
+                    "remote_url": self.remote_url,
+                    "appWaitActivity": self.appWaitActivity,
+                    "udid": self.udid,
+                    "app": self.app_local,
+                }
+            )
+        elif context == "local_real":
+            options.load_capabilities(
+                {
+                    "remote_url": self.remote_url,
+                    "appWaitActivity": self.appWaitActivity,
+                    "udid": self.udid,
+                    "app": self.app_local,
+                }
+            )
+
+        return options
 
 
-def remote_url_config():
-    load_environment()
-    if context == "browserstack":
-        return os.getenv("BROWSERSTACK_URL")
-    if context in ["local_emulator", "local_real"]:
-        return os.getenv("REMOTE_URL")
-
-
-def to_driver_options():
-    options = UiAutomator2Options()
-    load_environment()
-
-    if context == "browserstack":
-        browserstack_user_name = os.getenv("BROWSERSTACK_USER_NAME")
-        browserstack_access_key = os.getenv("BROWSERSTACK_ACCESS_KEY")
-        options.load_capabilities({
-            "platformName": "android",
-            "platformVersion": "9.0",
-            "deviceName": "Google Pixel 3",
-            "app": AndroidApp.get_apk_app(),
-            "appWaitActivity": "org.wikipedia.*",
-            "bstack:options": {
-                "projectName": "First Python project",
-                "buildName": "browserstack-build-1",
-                "sessionName": "BStack first_test",
-                "userName": browserstack_user_name,
-                "accessKey": browserstack_access_key,
-            },
-        })
-
-    elif context in ["local_emulator", "local_real"]:
-        local_device_name = os.getenv("LOCAL_DEVICE_NAME")
-        options.load_capabilities({
-            "deviceName": local_device_name,
-            "app": DATA_DIR + "/app-alpha-universal-release.apk",
-            "appWaitActivity": "org.wikipedia.*",
-        })
-
-    return options
+config = Config(context="bstack")

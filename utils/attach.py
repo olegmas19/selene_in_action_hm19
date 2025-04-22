@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-
 import allure
 import requests
 from dotenv import load_dotenv
@@ -21,13 +20,12 @@ def add_xml(browser):
 
 
 def add_video(session_id):
-    env_file = Path(__file__).parent / f".env.bstack"
-    load_dotenv(env_file)
-    browserstack_user_name = os.getenv("BROWSERSTACK_USER_NAME")
-    browserstack_access_key = os.getenv("BROWSERSTACK_ACCESS_KEY")
+    load_dotenv(
+        dotenv_path=Path(__file__).resolve().parent.parent / f".env.credentials"
+    )
     browserstack_session = requests.get(
         url=f"https://api.browserstack.com/app-automate/sessions/{session_id}.json",
-        auth=(browserstack_user_name, browserstack_access_key),
+        auth=(os.getenv("USER_NAME"), os.getenv("ACCESS_KEY")),
     ).json()
     video_url = browserstack_session["automation_session"]["video_url"]
 
