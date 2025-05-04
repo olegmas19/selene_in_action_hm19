@@ -20,6 +20,7 @@ class Config(BaseModel):
     def to_driver_options(self, context):
         options = UiAutomator2Options()
 
+
         if context == "bstack":
             load_dotenv(
                 dotenv_path=Path(__file__).resolve().parent / f".env.credentials"
